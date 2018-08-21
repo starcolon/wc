@@ -1,0 +1,15 @@
+{
+  "name": "wc",
+  "version": "0.0.1",
+  "description": "worldcup playground",
+  "main": "wc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "TaoPR",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "colors": "^1.3.1",
+    "monadbjs": "0.0.2"
+  }
+}
