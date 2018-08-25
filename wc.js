@@ -7,4 +7,6 @@ var F      = require('./lib/fundamental');
 
 // test init
 
-F.drawTeams('AF').then((teams) => console.log(teams))
+['EU','AS','AM','AF'].forEach((cont) => {
+  F.drawTeams(cont).then((teams) => console.log(teams.join(', ')));  
+})
