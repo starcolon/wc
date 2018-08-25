@@ -13,7 +13,9 @@ var F      = require('./lib/fundamental');
 
 
 F.newTournament().then((tour) => {
-  console.log(tour)
-  for (let i=0; i<4; i++)
+  // console.log(tour)
+  for (let i=0; i<4; i++){
+    console.log('GROUP : ', i)
     console.log(tour.round[32][i])
+  }
 })
