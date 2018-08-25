@@ -14,8 +14,9 @@ var F      = require('./lib/fundamental');
 
 F.newTournament().then((tour) => {
   // console.log(tour)
-  for (let i=0; i<4; i++){
+  for (let i=0; i<1; i++){
     console.log('GROUP : ', i)
     console.log(tour.round[32][i])
+    console.log(tour.round[32][i].fixture.map((m) => m.home + ' v ' + m.away))
   }
 })
