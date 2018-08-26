@@ -7,10 +7,16 @@ var F      = require('./lib/fundamental');
 
 var year = process.argv.slice(2)[0]
 
-console.log('READING TOURNAMENT : ', year)
+var loader = year ? 
+  F.loadTournament(year*1) : 
+  F.countYears().do((n) => {
+    year = n;
+    return F.loadTournament(n*1) // TAOTODO: Doesn't work well here
+  });
 
-F.loadTournament(year*1).then((tours) => {
+loader.do((tours) => {
 
+  console.log('READING TOURNAMENT : ', year)
   var tour = tours[0]
 
   // console.log(tour)
