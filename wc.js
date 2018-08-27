@@ -5,6 +5,4 @@
 var colors = require('colors');
 var F      = require('./lib/fundamental');
 
-while(true){
-  
-}
+F.newTournament()
