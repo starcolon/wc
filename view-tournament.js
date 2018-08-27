@@ -23,6 +23,8 @@ loader.do((tours) => {
   for (let i=0; i<4; i++){
     console.log('GROUP : '.cyan, i)
     console.log(tour.round[32][i])
-    console.log(tour.round[32][i].fixture.map((m) => m.home + ' v ' + m.away))
+    console.log(tour.round[32][i].fixture.map((m) => {
+      m.home + ' v ' + m.away
+    }))
   }
 }).then(() => process.exit(0))
