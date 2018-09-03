@@ -11,7 +11,7 @@ var loader = year ?
   F.loadTournament(year*1) : 
   F.countYears().do((n) => {
     year = n;
-    return F.loadTournament(n*1) // TAOTODO: Doesn't work well here
+    return F.loadTournament(n*1)
   });
 
 loader.do((tours) => {

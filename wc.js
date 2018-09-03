@@ -5,7 +5,7 @@
 var colors = require('colors');
 var F      = require('./lib/fundamental');
 
-//F.newTournament()
+// F.newTournament()
 
 var scorers = [
   '0-1 Arnautovic 10',
