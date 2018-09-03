@@ -24,7 +24,7 @@ loader.do((tours) => {
     else [score.f, score.a].join('-')
   }
 
-  // console.log(tour)
+  // TAOTODO: FOllowing should read score from [db.result] instead
   for (let i=0; i<1; i++){
     console.log('GROUP : '.cyan, i)
     console.log(tour.round[32][i])
