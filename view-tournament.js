@@ -10,7 +10,6 @@ var year = process.argv.slice(2)[0]
 var loader = year ? 
   F.loadTournament(year*1).asPromise() : 
   F.countYears().asPromise().then((n) => {
-    console.log(`YEAR #${n}`)
     return F.loadTournament(n*1).asPromise()
   });
 
