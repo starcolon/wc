@@ -68,6 +68,9 @@ function repl(){
       let [a,tours] = both;
       tour = tours[0];
       [nextRound, nextGroup, nextMatch] = a;
+
+      console.log(a); // TAODEBUG:
+
       let home = tour.round[nextRound][nextGroup].fixture[nextMatch].home;
       let away = tour.round[nextRound][nextGroup].fixture[nextMatch].away;
       
@@ -100,7 +103,7 @@ function repl(){
       }
       else return Promise.resolve(null)
     })
-    // TAOTODO: Proceed the tournament
+    .then(() => repl())
 }
 
 repl()
