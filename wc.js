@@ -75,8 +75,8 @@ function repl(){
       let away = tour.round[nextRound][nextGroup].fixture[nextMatch].away;
       
       console.log('YEAR  : '.green, year)
-      console.log('ROUND : '.green, nextRound, ' #', nextGroup+1)
-      console.log('GAME  : '.green, nextMatch+1)
+      console.log('ROUND : '.green, nextRound, ' #', nextGroup)
+      console.log('GAME  : '.green, nextMatch)
       console.log()
       // TAOTODO: Print out first leg if second leg
       if (nextRound == 32){
