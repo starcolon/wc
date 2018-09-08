@@ -47,6 +47,13 @@ function printTable(group){
   })
 }
 
+function printLeg(group){
+  console.log(
+    'First leg : '.green,
+    group.teams[0].team + ' ' + group.teams[0].f + '-' + group.teams[0].a + ' ' + group.teams[1].team
+  )
+}
+
 function repl(){
   let year;
   let tour;
@@ -68,8 +75,11 @@ function repl(){
       let [a,tours] = both;
       tour = tours[0];
       [nextRound, nextGroup, nextMatch] = a;
+    })
+    .then(() => F.refreshTournament(year,nextRound))
+    .then((t) => {
 
-      console.log(a); // TAODEBUG:
+      tour = t;
 
       let home = tour.round[nextRound][nextGroup].fixture[nextMatch].home;
       let away = tour.round[nextRound][nextGroup].fixture[nextMatch].away;
@@ -78,10 +88,14 @@ function repl(){
       console.log('ROUND : '.green, nextRound, ' #', nextGroup)
       console.log('GAME  : '.green, nextMatch)
       console.log()
-      // TAOTODO: Print out first leg if second leg
+      
       if (nextRound == 32){
         printTable(tour.round[32][nextGroup])
       }
+      else if (nextMatch == 1){
+        printLeg(tour.round[nextRound][nextGroup])
+      }
+
       console.log('NEXT MATCH : '.magenta, home + ' v ' + away)
       console.log()
       return F.inputScore()
