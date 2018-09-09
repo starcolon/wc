@@ -5,19 +5,6 @@
 var colors = require('colors');
 var F      = require('./lib/fundamental');
 
-// F.newTournament()
-
-// var scorers = [
-//   '0-1 Arnautovic 10',
-//   '1-1 Mahmoud 21',
-//   '2-1 Mahmoud pen41',
-//   '3-1 Darlem 88'
-// ]
-// F.addFixture(1,32,0,0,'3-1',scorers).then(() => {
-//   console.log('Woohooo!');
-//   process.exit(0)
-// })
-
 function padEnd(str,targetLength,padString) {
   targetLength = targetLength>>0; //floor if number or convert non-number to 0;
   padString = String((typeof padString !== 'undefined' ? padString : ' '));
@@ -75,6 +62,7 @@ function repl(){
       let [a,tours] = both;
       tour = tours[0];
       [nextRound, nextGroup, nextMatch] = a;
+      console.log(a) // TAODEBUG:
     })
     .then(() => F.refreshTournament(year,nextRound))
     .then((t) => {
