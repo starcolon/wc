@@ -23,12 +23,13 @@ loader.then((tours) => {
     else [score.f, score.a].join('-')
   }
 
-  // TAOTODO: FOllowing should read score from [db.result] instead
   for (let i=0; i<1; i++){
     console.log('GROUP : '.cyan, i)
     console.log(tour.round[32][i])
     console.log(tour.round[32][i].fixture.map((m) => {
-      return [m.home, scoreToStr(m.score), m.away].join(' ')
+      return [m.home, 'v', m.away].join(' ')
     }))
   }
+
+  console.log(tour.round[1][0].teams) // Champions
 }).then(() => process.exit(0))
