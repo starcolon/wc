@@ -65,17 +65,25 @@ function repl(){
       console.log(a) // TAODEBUG:
       return nextRound
     })
-    .then((round) => { if (round > 0) return F.refreshTournament(year,nextRound)
+    .then((round) => { 
+      if (round > 0) return F.refreshTournament(year,nextRound)
       else {
         // TAOTODO: Display summary of the last tournament
-        
-        
+        console.log('TOURNAMENT ENDED!'.magenta)
+
         // Proceed to the next year!
-        year = year + 1;
         nextGroup = 0;
         nextMatch = 0;
         nextRound = 32;
-        return F.newTournament().then(() => F.loadTournament(year)).then((tours) => tours[0])
+        return F
+          .refreshTournament(year,1) // Update current champions!
+          .then(() => {
+            console.log('aaaaa'); // TAODEBUG:
+            year = year + 1;
+            return F.newTournament()
+          })
+          .then(() => F.loadTournament(year))
+          .then((tours) => tours[0])
       }
     })
     .then((t) => {
