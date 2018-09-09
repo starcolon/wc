@@ -18,18 +18,9 @@ loader.then((tours) => {
   console.log('READING TOURNAMENT : ', year)
   var tour = tours[0]
 
-  var scoreToStr = function(score){
-    if (score == null) return 'v';
-    else [score.f, score.a].join('-')
+  if (tour.round[1] != null){
+    console.log('CHAMPIONS ARE '.magenta, tour.round[1][0].teams[0].team)
   }
-
-  for (let i=0; i<1; i++){
-    console.log('GROUP : '.cyan, i)
-    console.log(tour.round[32][i])
-    console.log(tour.round[32][i].fixture.map((m) => {
-      return [m.home, 'v', m.away].join(' ')
-    }))
-  }
-
-  console.log(tour.round[1][0].teams) // Champions
+  
+  return F.viewYearSummary(year*1)
 }).then(() => process.exit(0))
