@@ -63,8 +63,21 @@ function repl(){
       tour = tours[0];
       [nextRound, nextGroup, nextMatch] = a;
       console.log(a) // TAODEBUG:
+      return nextRound
     })
-    .then(() => F.refreshTournament(year,nextRound))
+    .then((round) => { if (round > 0) return F.refreshTournament(year,nextRound)
+      else {
+        // TAOTODO: Display summary of the last tournament
+        
+        
+        // Proceed to the next year!
+        year = year + 1;
+        nextGroup = 0;
+        nextMatch = 0;
+        nextRound = 32;
+        return F.newTournament().then(() => F.loadTournament(year)).then((tours) => tours[0])
+      }
+    })
     .then((t) => {
 
       tour = t;
