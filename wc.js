@@ -78,7 +78,6 @@ function repl(){
         return F
           .refreshTournament(year,1) // Update current champions!
           .then(() => {
-            console.log('aaaaa'); // TAODEBUG:
             year = year + 1;
             return F.newTournament()
           })
