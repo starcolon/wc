@@ -6,8 +6,8 @@ var colors = require('colors');
 var F      = require('./lib/fundamental');
 var PriorityQueue = require('js-priority-queue');
 
-var team1 = process.argv.slice(2)[0];
-var team2 = process.argv.slice(2)[1];
+var team1 = process.argv.slice(2)[0].replace('_', ' ');
+var team2 = process.argv.slice(2)[1].replace('_', ' ');
 
 var PERF = {64: 'Did not qualify '.gray, 32: 'Group stage', 16: 'Round16', 8: 'Qtr', 4: 'Semi', 2: 'Final'}
 
@@ -57,7 +57,7 @@ var loadTeamScores = function(){
       var t1 = padEnd(teams[0], 19, ' ')
       var t2 = padEnd(teams[1], 19, ' ')
       console.log(' YEAR | ', t1, t2)
-      console.log(padEnd('-', 40, '-'))
+      console.log(padEnd('-', 50, '-'))
 
       for (let y=0; y<maxYears; y++){
         let Y = lastYear - y;
@@ -121,7 +121,7 @@ var loadTeamScores = function(){
         console.log(yearStr, ' | ', 
           padEnd(PERF[bestPerf[0]],16,' '),' | ',
           padEnd(PERF[bestPerf[1]],16,' '))
-        console.log(padEnd('-', 40, '-'))
+        console.log(padEnd('-', 50, '-'))
 
         for (i=0; i<5; i++){
           var v1 = padEnd(' ',16,' ')
@@ -138,6 +138,7 @@ var loadTeamScores = function(){
           console.log('      | ', v1, ' | ', v2)
         }
         console.log('      | ')
+        console.log(padEnd('-', 50, '-'))
       }
     })
     .then(() => process.exit(0))
