@@ -121,6 +121,7 @@ var loadTeamScores = function(){
         console.log(yearStr, ' | ', 
           padEnd(PERF[bestPerf[0]],16,' '),' | ',
           padEnd(PERF[bestPerf[1]],16,' '))
+        console.log(padEnd('-', 40, '-'))
 
         for (i=0; i<5; i++){
           var v1 = padEnd(' ',16,' ')
