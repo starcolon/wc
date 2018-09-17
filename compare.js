@@ -50,6 +50,36 @@ var loadTeamScores = function(){
       console.log(`From ${scorers.length} goals`)
       console.log()
 
+      var lastMeetings = [];
+
+      results.forEach((res) => {
+        if ((res.home == teams[0] && res.away == teams[1]) || 
+          (res.away == teams[0] && res.home == teams[1])){
+          lastMeetings.push(res)
+        }
+      })
+
+      lastMeetings.sort((a,b) => b.year*1000 + b.round - a.year*1000 + a.round)
+
+      console.log()
+      console.log('LAST MEETINGS'.blue)
+      console.log('========================='.blue)
+      for (i=0; i<5; i++){
+        if (i >= lastMeetings.length) break;
+        var m = lastMeetings[i]
+        var color = (s) => s;
+        if (m.outcome == 'W' && m.home == teams[0]) color = (s) => s.green;
+        else if (m.outcome == 'L' && m.away == teams[0]) color = (s) => s.green;
+        else if (m.outcome == 'L' && m.home == teams[0]) color = (s) => s.red;
+        else if (m.outcome == 'W' && m.away == teams[0]) color = (s) => s.red;
+        console.log(color(`  ${m.home} ${m.f}-${m.a} ${m.away} ----- year #${m.year}, ${PERF[m.round]}`))
+      }
+      if (lastMeetings.length == 0)
+        console.log("  none")
+
+      console.log()
+      console.log()
+
       var t1 = padEnd(teams[0], 19, ' ')
       var t2 = padEnd(teams[1], 19, ' ')
       console.log(' YEAR | ', t1, t2)
@@ -75,7 +105,7 @@ var loadTeamScores = function(){
                 bestPerf[i] = r.round
               }
 
-              // TAOTODO: Record win/tie/lose
+              // Record win/tie/lose
               if ((r.home == teams[i] && r.outcome == 'W') || 
                   (r.away == teams[i] && r.outcome == 'L')){
                 streaks[i].w ++;
