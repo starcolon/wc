@@ -34,10 +34,6 @@ var loadTeamScores = function(){
   var maxYears = 10;
   var teams = [team1, team2];
 
-  var annualPerformance = [initAnnualPerformance(), initAnnualPerformance()];
-  var annualScorers = [{name: null, score: null}, {name: null, score: null}];
-  var mostOpponentScorers = [];
-
   var lastYear = null;
 
   F.countYears().asPromise()
@@ -69,6 +65,7 @@ var loadTeamScores = function(){
         resultsY.sort((a,b) => a.round - b.round)
 
         let bestPerf = [64,64];
+        let streaks = [{w:0, d:0, l:0, f:0, a:0}, {w:0, d:0, l:0, f:0, a:0}]
 
         resultsY.forEach((r) => {
           [0,1].forEach((i) => {
@@ -79,6 +76,26 @@ var loadTeamScores = function(){
               }
 
               // TAOTODO: Record win/tie/lose
+              if ((r.home == teams[i] && r.outcome == 'W') || 
+                  (r.away == teams[i] && r.outcome == 'L')){
+                streaks[i].w ++;
+              }
+              else if ((r.home == teams[i] && r.outcome == 'L') || 
+                  (r.away == teams[i] && r.outcome == 'W')){
+                streaks[i].l ++;
+              }
+              else {
+                streaks[i].d ++;
+              }
+
+              if ((r.home == teams[i])){
+                streaks[i].f += r.f;
+                streaks[i].a += r.a;
+              }
+              else {
+                streaks[i].f += r.a;
+                streaks[i].a += r.f;
+              }
             }
           })
         })
@@ -118,9 +135,19 @@ var loadTeamScores = function(){
 
         var yearStr = ' ' + padEnd(Y.toString(),3,' ')
 
+        var streakStr = streaks.map((st) => {
+          let color = (s) => s.blue;
+          if (st.w==0 || st.f==0) { color = (s) => s.red }
+          else if (st.l==0 || st.a==0) { color = (s) => s.green }
+          return color(`W${st.w} D${st.d} L${st.l} - ${st.f}:${st.a} `)
+        })
+
         console.log(yearStr, ' | ', 
           padEnd(PERF[bestPerf[0]],16,' '),' | ',
           padEnd(PERF[bestPerf[1]],16,' '))
+        console.log('      | ',
+          padEnd(streakStr[0],16,' '), ' | ',
+          padEnd(streakStr[1],16,' '))
         console.log(padEnd('-', 50, '-'))
 
         for (i=0; i<5; i++){
