@@ -35,15 +35,16 @@ var determineWinners = function(legs){
   home1stLeg.a += legs[1].f;
   home1stLeg.awayGoalConceded += legs[1].a;
 
-  var toScore = function(leg,venue){
-    return leg.f + '-' + leg.a + ' ' + venue
+  var toScore = function(leg,venue,swap){
+    if (swap == 'swap') return leg.a + '-' + leg.f + ' ' + venue
+    else return leg.f + '-' + leg.a + ' ' + venue
   }
 
   if (home1stLeg.f > home1stLeg.a || (home1stLeg.f == home1stLeg.a && home1stLeg.awayGoal > home1stLeg.awayGoalConceded)){
-    return [legs[0].home, legs[0].away, toScore(legs[0], 'H'), toScore(legs[1], 'A')]
+    return [legs[0].home, legs[0].away, toScore(legs[0], 'H'), toScore(legs[1], 'A', 'swap')]
   }
   else 
-    return [legs[0].away, legs[0].home, toScore(legs[0], 'A'), toScore(legs[1], 'H')]
+    return [legs[0].away, legs[0].home, toScore(legs[0], 'A', 'swap'), toScore(legs[1], 'H')]
 }
 
 var determineTopScorers = function(goals){
