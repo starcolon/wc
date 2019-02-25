@@ -31,7 +31,8 @@ function padEnd(str,targetLength,padString) {
 }
 
 var loadTeamScores = function(){
-  var maxYears = 10;
+  var maxYears = 30;
+  var maxYearsToDisplay = 6;
   var teams = [team1, team2];
 
   var lastYear = null;
@@ -85,7 +86,7 @@ var loadTeamScores = function(){
       console.log(' YEAR | ', t1, t2)
       console.log(padEnd('-', 50, '-'))
 
-      for (let y=0; y<maxYears; y++){
+      for (let y=0; y<maxYearsToDisplay; y++){
         let Y = lastYear - y;
         if (Y<0) continue;
 
