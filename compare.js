@@ -31,8 +31,8 @@ function padEnd(str,targetLength,padString) {
 }
 
 var loadTeamScores = function(){
-  var maxYears = 30;
-  var maxYearsToDisplay = 6;
+  var maxYears = 50;
+  var maxYearsToDisplay = 8;
   var teams = [team1, team2];
 
   var lastYear = null;
@@ -40,20 +40,21 @@ var loadTeamScores = function(){
   F.countYears().asPromise()
     .then((_lastYear) => {
       lastYear = _lastYear;
+      let years = lastYear - maxYears;
       return Promise.all([
-          F.loadRecentGames(lastYear - maxYears,{$or: [{home: team1}, {away: team1}, {home: team2}, {away: team2}]}),
-          F.loadRecentGoals(lastYear - maxYears,{$or: [{team: team1}, {against: team1}, {team: team2}, {against: team2}]})
+          F.loadRecentGames(years, {$or: [{home: team1}, {away: team1}, {home: team2}, {away: team2}]}),
+          F.loadRecentGoals(years, {$or: [{team: team1}, {against: team1}, {team: team2}, {against: team2}]})
         ])
     })
-    .then(([results, scorers]) => {
+    .then(([games, scorers]) => {
 
-      console.log(`From ${results.length} matches`)
+      console.log(`From ${games.length} meetings`)
       console.log(`From ${scorers.length} goals`)
       console.log()
 
       var lastMeetings = [];
 
-      results.forEach((res) => {
+      games.forEach((res) => {
         if ((res.home == teams[0] && res.away == teams[1]) || 
           (res.away == teams[0] && res.home == teams[1])){
           lastMeetings.push(res)
@@ -62,18 +63,22 @@ var loadTeamScores = function(){
 
       lastMeetings.sort((a,b) => b.year*1000 + b.round - a.year*1000 + a.round)
 
+      let renderMatch = function(m, refTeam){
+        var color = (s) => s;
+        if (m.outcome == 'W' && m.home == refTeam) color = (s) => s.green;
+        else if (m.outcome == 'L' && m.away == refTeam) color = (s) => s.green;
+        else if (m.outcome == 'L' && m.home == refTeam) color = (s) => s.red;
+        else if (m.outcome == 'W' && m.away == refTeam) color = (s) => s.red;
+        console.log(color(`  ${m.home} ${m.f}-${m.a} ${m.away} ----- year #${m.year}, ${PERF[m.round]}`))
+      }
+
       console.log()
-      console.log('LAST MEETINGS'.blue)
+      console.log('LAST 7 MEETINGS'.blue)
       console.log('========================='.blue)
-      for (i=0; i<5; i++){
+      for (i=0; i<7; i++){
         if (i >= lastMeetings.length) break;
         var m = lastMeetings[i]
-        var color = (s) => s;
-        if (m.outcome == 'W' && m.home == teams[0]) color = (s) => s.green;
-        else if (m.outcome == 'L' && m.away == teams[0]) color = (s) => s.green;
-        else if (m.outcome == 'L' && m.home == teams[0]) color = (s) => s.red;
-        else if (m.outcome == 'W' && m.away == teams[0]) color = (s) => s.red;
-        console.log(color(`  ${m.home} ${m.f}-${m.a} ${m.away} ----- year #${m.year}, ${PERF[m.round]}`))
+        renderMatch(m, teams[0])
       }
       if (lastMeetings.length == 0)
         console.log("  none")
@@ -90,7 +95,7 @@ var loadTeamScores = function(){
         let Y = lastYear - y;
         if (Y<0) continue;
 
-        let resultsY = results.filter((a) => a.year == Y)
+        let resultsY = games.filter((a) => a.year == Y)
         let scorersY = scorers.filter((a) => a.year == Y)
 
         resultsY.sort((a,b) => a.round - b.round)
