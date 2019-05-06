@@ -31,52 +31,159 @@ function padEnd(str,targetLength,padString) {
 }
 
 var loadTeamScores = function(){
-  var maxYears = 30;
-  var maxYearsToDisplay = 6;
+  var maxYears = 50;
+  var maxYearsToDisplay = 8;
   var teams = [team1, team2];
 
   var lastYear = null;
 
+  var scoreComparer = (a,b) => b.goal - a.goal;
+
   F.countYears().asPromise()
     .then((_lastYear) => {
       lastYear = _lastYear;
+      let years = lastYear - maxYears;
       return Promise.all([
-          F.loadRecentGames(lastYear - maxYears,{$or: [{home: team1}, {away: team1}, {home: team2}, {away: team2}]}),
-          F.loadRecentGoals(lastYear - maxYears,{$or: [{team: team1}, {against: team1}, {team: team2}, {against: team2}]})
+          F.loadRecentGames(years, {$or: [{home: team1}, {away: team1}, {home: team2}, {away: team2}]}),
+          F.loadRecentGoals(years, {$or: [{team: team1}, {against: team1}, {team: team2}, {against: team2}]})
         ])
     })
-    .then(([results, scorers]) => {
+    .then(([games, scorers]) => {
 
-      console.log(`From ${results.length} matches`)
+      console.log(`From ${games.length} meetings`)
       console.log(`From ${scorers.length} goals`)
       console.log()
 
       var lastMeetings = [];
+      var totalStats = [
+        {w:0, d:0, l:0, f:0, a:0, biggestWin: [], biggestLoss: [], cleansheet: 0, noscore: 0},
+        {w:0, d:0, l:0, f:0, a:0, biggestWin: [], biggestLoss: [], cleansheet: 0, noscore: 0}
+      ];
 
-      results.forEach((res) => {
+      const INDEXES = [0,1];
+      let streakColour = function(st, percent){
+        let color = (s) => s.blue;
+        if (st.w==0 || st.f==0) { color = (s) => s.red }
+        else if (st.l==0 || st.a==0) { color = (s) => s.green }
+        return color(`W${st.w} D${st.d} L${st.l} - ${st.f}:${st.a} `)
+      }
+
+      let toPercentage = function(st){
+        let tot = st.w + st.d + st.l;
+        let P = (a) => {
+          if (a==undefined || a==null) return undefined;
+          let v = (a*100/tot);
+          if (v<10) return Math.ceil(v) + '%';
+          else return Math.floor(v) + '%';
+        }
+        return {
+          w: P(st.w), d: P(st.d), l: P(st.l), 
+          f: st.f, a: st.a,
+          noscore: P(st.noscore),
+          cleansheet: P(st.cleansheet)
+        }
+      }
+
+      games.forEach((res) => {
         if ((res.home == teams[0] && res.away == teams[1]) || 
           (res.away == teams[0] && res.home == teams[1])){
           lastMeetings.push(res)
         }
+
+        INDEXES.forEach((i) => {
+          if (res.home == teams[i] || res.away == teams[i]){
+            let [f,a] = [0,0];
+            let opponent = null;
+            let venue = 'H';
+            let outcome = 'D';
+            if (res.home == teams[i]){
+              opponent = res.away;
+              f = res.f;
+              a = res.a;
+            }
+            else {
+              venue = 'A';
+              opponent = res.home;
+              f = res.a;
+              a = res.f;
+            }
+
+            if (f>a) outcome = 'W';
+            else if (f<a) outcome = 'L';
+
+            totalStats[i].f += f;
+            totalStats[i].a += a;
+            totalStats[i].w += (outcome == 'W') ? 1 : 0;
+            totalStats[i].d += (outcome == 'D') ? 1 : 0;
+            totalStats[i].l += (outcome == 'L') ? 1 : 0;
+            totalStats[i].cleansheet += (a==0) ? 1 : 0;
+            totalStats[i].noscore += (f==0) ? 1 : 0;
+
+            let _res = JSON.parse(JSON.stringify(res));
+
+            if (outcome == 'W'){
+              // Update biggest win
+              if (totalStats[i].biggestWin[venue]){
+                let m0 = totalStats[i].biggestWin[venue];
+                if (Math.abs(m0.f - m0.a) <= Math.abs(f - a)){
+                  totalStats[i].biggestWin[venue] = _res;
+                }
+              }
+              else totalStats[i].biggestWin[venue] = _res;
+            }
+            else if (outcome == 'L'){
+              // Update biggest loss
+              if (totalStats[i].biggestLoss[venue]){
+                let m0 = totalStats[i].biggestLoss[venue];
+                if (Math.abs(m0.f - m0.a) <= Math.abs(f - a)){
+                  totalStats[i].biggestLoss[venue] = _res;
+                }
+              }
+              else totalStats[i].biggestLoss[venue] = _res;
+            }
+          }
+        })
       })
 
       lastMeetings.sort((a,b) => b.year*1000 + b.round - a.year*1000 + a.round)
 
+      let renderMatch = function(m, refTeam){
+        if (!m) return '--';
+        var color = (s) => s;
+        if (m.outcome == 'W' && m.home == refTeam) color = (s) => s.green;
+        else if (m.outcome == 'L' && m.away == refTeam) color = (s) => s.green;
+        else if (m.outcome == 'L' && m.home == refTeam) color = (s) => s.red;
+        else if (m.outcome == 'W' && m.away == refTeam) color = (s) => s.red;
+        return color(`  ${m.home} ${m.f}-${m.a} ${m.away} ----- year #${m.year}, ${PERF[m.round]}`)
+      }
+
       console.log()
-      console.log('LAST MEETINGS'.blue)
+      console.log('LAST 7 MEETINGS'.blue)
       console.log('========================='.blue)
-      for (i=0; i<5; i++){
+      for (i=0; i<7; i++){
         if (i >= lastMeetings.length) break;
         var m = lastMeetings[i]
-        var color = (s) => s;
-        if (m.outcome == 'W' && m.home == teams[0]) color = (s) => s.green;
-        else if (m.outcome == 'L' && m.away == teams[0]) color = (s) => s.green;
-        else if (m.outcome == 'L' && m.home == teams[0]) color = (s) => s.red;
-        else if (m.outcome == 'W' && m.away == teams[0]) color = (s) => s.red;
-        console.log(color(`  ${m.home} ${m.f}-${m.a} ${m.away} ----- year #${m.year}, ${PERF[m.round]}`))
+        console.log(renderMatch(m, teams[0]))
       }
       if (lastMeetings.length == 0)
         console.log("  none")
+
+      console.log()
+      console.log()
+
+      console.log('ALL TIME STATS'.blue)
+      console.log('========================='.blue)
+      INDEXES.forEach((i) => {
+        let record = totalStats[i];
+        let precord = toPercentage(record);
+        let stat = `- ${record.cleansheet} cleansheets (${precord.cleansheet}), ${record.noscore} games without scoring (${precord.noscore})`;
+        console.log(teams[i], streakColour(precord), stat)
+        console.log(`      Biggest home win : `, renderMatch(record.biggestWin['H'], teams[i]))
+        console.log(`      Biggest away win : `, renderMatch(record.biggestWin['A'], teams[i]))
+        console.log(`      Biggest home loss : `, renderMatch(record.biggestLoss['H'], teams[i]))
+        console.log(`      Biggest away loss : `, renderMatch(record.biggestLoss['A'], teams[i]))
+        console.log()
+      })
 
       console.log()
       console.log()
@@ -90,7 +197,7 @@ var loadTeamScores = function(){
         let Y = lastYear - y;
         if (Y<0) continue;
 
-        let resultsY = results.filter((a) => a.year == Y)
+        let resultsY = games.filter((a) => a.year == Y)
         let scorersY = scorers.filter((a) => a.year == Y)
 
         resultsY.sort((a,b) => a.round - b.round)
@@ -99,7 +206,7 @@ var loadTeamScores = function(){
         let streaks = [{w:0, d:0, l:0, f:0, a:0}, {w:0, d:0, l:0, f:0, a:0}]
 
         resultsY.forEach((r) => {
-          [0,1].forEach((i) => {
+          INDEXES.forEach((i) => {
             if (r.home == teams[i] || r.away == teams[i]){
               if (r.round < bestPerf[i]){
                 // Find the best performance so far
@@ -155,7 +262,6 @@ var loadTeamScores = function(){
         })
 
         // Sort the scoreres
-        var scoreComparer = (a,b) => b.goal - a.goal;
         var topScorersSorted = [null, null];
         for (let i=0; i<2; i++){
           topScorersSorted[i] = new PriorityQueue({comparator:scoreComparer})
@@ -163,15 +269,9 @@ var loadTeamScores = function(){
             topScorersSorted[i].queue(t)
           }
         }
-
         var yearStr = ' ' + padEnd(Y.toString(),3,' ')
 
-        var streakStr = streaks.map((st) => {
-          let color = (s) => s.blue;
-          if (st.w==0 || st.f==0) { color = (s) => s.red }
-          else if (st.l==0 || st.a==0) { color = (s) => s.green }
-          return color(`W${st.w} D${st.d} L${st.l} - ${st.f}:${st.a} `)
-        })
+        var streakStr = streaks.map(streakColour);
 
         console.log(yearStr, ' | ', 
           padEnd(PERF[bestPerf[0]],16,' '),' | ',
