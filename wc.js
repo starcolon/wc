@@ -68,7 +68,6 @@ function repl(){
     .then((round) => { 
       if (round > 0) return F.refreshTournament(year,nextRound)
       else {
-        // TAOTODO: Display summary of the last tournament
         console.log('TOURNAMENT ENDED!'.magenta)
 
         // Proceed to the next year!
