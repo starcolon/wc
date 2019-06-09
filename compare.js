@@ -31,8 +31,9 @@ function padEnd(str,targetLength,padString) {
 }
 
 var loadTeamScores = function(){
-  var maxYears = 50;
-  var maxYearsToDisplay = 8;
+  const maxYears = 50;
+  const numRecentMatches = 50;
+  const maxYearsToDisplay = 5;
   var teams = [team1, team2];
 
   var lastYear = null;
@@ -84,24 +85,32 @@ var loadTeamScores = function(){
         }
       }
 
-      games.forEach((res) => {
+      homeCount = 0;
+      awayCount = 0;
+
+      let newerFirst = (a,b) => (b.year*100 - b.round) - (a.year*100 - a.round);
+      games.sort(newerFirst).forEach((res) => {
         if ((res.home == teams[0] && res.away == teams[1]) || 
           (res.away == teams[0] && res.home == teams[1])){
           lastMeetings.push(res)
         }
 
         INDEXES.forEach((i) => {
-          if (res.home == teams[i] || res.away == teams[i]){
+          if ((res.home == teams[i] && homeCount < numRecentMatches) || 
+            (res.away == teams[i] && awayCount < numRecentMatches)){
+
             let [f,a] = [0,0];
             let opponent = null;
             let venue = 'H';
             let outcome = 'D';
             if (res.home == teams[i]){
+              homeCount ++;
               opponent = res.away;
               f = res.f;
               a = res.a;
             }
             else {
+              awayCount ++;
               venue = 'A';
               opponent = res.home;
               f = res.a;
@@ -145,6 +154,7 @@ var loadTeamScores = function(){
         })
       })
 
+
       lastMeetings.sort((a,b) => b.year*1000 + b.round - a.year*1000 + a.round)
 
       let renderMatch = function(m, refTeam){
@@ -171,8 +181,8 @@ var loadTeamScores = function(){
       console.log()
       console.log()
 
-      console.log('ALL TIME STATS'.blue)
-      console.log('========================='.blue)
+      console.log(`ALL TIME STATS (last ${numRecentMatches} games)`.blue)
+      console.log('================================'.blue)
       INDEXES.forEach((i) => {
         let record = totalStats[i];
         let precord = toPercentage(record);
