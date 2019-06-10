@@ -62,7 +62,6 @@ function repl(){
       let [a,tours] = both;
       tour = tours[0];
       [nextRound, nextGroup, nextMatch] = a;
-      console.log(a) // TAODEBUG:
       return nextRound
     })
     .then((round) => { 
