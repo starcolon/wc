@@ -80,6 +80,7 @@ F.countYears().asPromise()
     console.log('-------------------------------------------------------------------')
     console.log('YEAR | CHAMPIONS   | RUNNERS-UP  | SCORES     |')
     console.log('-------------------------------------------------------------------')
+    champs = {};
     for (var year = maxYear - numRecentYears; year <= maxYear; year++){
       if (year <= 0) continue;
       
@@ -94,6 +95,17 @@ F.countYears().asPromise()
 
       let [topScorer,topNumGoals] = determineTopScorers(goalsYear);
 
+      if (!champs[champ]){
+        champs[champ] = {team: champ, champ: 0, runner: 0}
+      }
+
+      if (!champs[runner]){
+        champs[runner] = {team: runner, champ: 0, runner: 0}
+      }
+
+      champs[champ].champ++;
+      champs[runner].runner++;
+
       console.log(' ', year, (year<10) ? ' | ' : '| ',
         padEnd(champ, 12, ' '),
         padEnd(runner, 12, ' '),
@@ -101,6 +113,19 @@ F.countYears().asPromise()
         score2,' ',
         topScorer,
         topNumGoals)
+    }
+    console.log('-------------------------------------------------------------------')
+    sorted = [];
+    for (let t in champs){
+      sorted.push(champs[t])
+    }
+    sorted = sorted.sort((a,b) => (b.champ*1000 + b.runner) - (a.champ*1000 + a.runner))
+    for (let s of sorted){
+      if (s.team == "??") continue;
+      let team = s.team.padEnd(12)
+      if (s.champ > 0)
+        team = team.green;
+      console.log(' ' + team + s.champ + " champions, " + s.runner + " runners-ups")
     }
     console.log('-------------------------------------------------------------------')
   })
