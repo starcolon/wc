@@ -125,7 +125,8 @@ F.countYears().asPromise()
       let team = s.team.padEnd(12)
       if (s.champ > 0)
         team = team.green;
-      console.log(' ' + team + s.champ + " champions, " + s.runner + " runners-ups")
+      console.log(' ' + team + s.champ + " champions, " + s.runner + " runners-ups (" + 
+        (s.champ + s.runner) + " finals)")
     }
     console.log('-------------------------------------------------------------------')
   })
