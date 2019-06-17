@@ -283,9 +283,17 @@ var loadTeamScores = function(){
 
         var streakStr = streaks.map(streakColour);
 
+        var colourRound = (r) => 
+          (r.trim().toLowerCase()=='group stage') ? padEnd(r,16,' ').gray : 
+          (r.trim().toLowerCase()=='final') ? padEnd(r,16,' ').cyan : padEnd(r,16,' ').yellow;
+
+        let rounds = [colourRound(PERF[bestPerf[0]]), colourRound(PERF[bestPerf[1]])]
+
         console.log(yearStr, ' | ', 
-          padEnd(PERF[bestPerf[0]],16,' '),' | ',
-          padEnd(PERF[bestPerf[1]],16,' '))
+          rounds[0],' | ',
+          rounds[1])
+          // padEnd(PERF[bestPerf[0]],16,' '),' | ',
+          // padEnd(PERF[bestPerf[1]],16,' '))
         console.log('      | ',
           padEnd(streakStr[0],16,' '), ' | ',
           padEnd(streakStr[1],16,' '))
