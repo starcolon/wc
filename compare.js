@@ -33,7 +33,7 @@ function padEnd(str,targetLength,padString) {
 var loadTeamScores = function(){
   const maxYears = 50;
   const numRecentMatches = 50;
-  const maxYearsToDisplay = 5;
+  const maxYearsToDisplay = 8;
   var teams = [team1, team2];
 
   var lastYear = null;
@@ -292,8 +292,6 @@ var loadTeamScores = function(){
         console.log(yearStr, ' | ', 
           rounds[0],' | ',
           rounds[1])
-          // padEnd(PERF[bestPerf[0]],16,' '),' | ',
-          // padEnd(PERF[bestPerf[1]],16,' '))
         console.log('      | ',
           padEnd(streakStr[0],16,' '), ' | ',
           padEnd(streakStr[1],16,' '))
