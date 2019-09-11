@@ -37,29 +37,80 @@ function loadAllMatches(team1, team2){
   }
 }
 
-function printGame(lastYear,g,focusedTeam){
+function printGame(lastYear,g,focusedTeam,maxPad){
+  if (!g)
+    return;
   let yearDiff = lastYear - g.year;
   let diff = yearDiff == 0 ? "This year" : yearDiff + " yrs ago";
-  let teamColour = (t) => {
-    if (g.outcome=='W' && focusedTeam==g.home) return t.green;
-    else if (g.outcome=='L' && focusedTeam==g.away) return t.green;
-    else if (g.outcome=='L' && focusedTeam==g.home) return t.red;
-    else if (g.outcome=='W' && focusedTeam==g.away) return t.red;
-    else return t;
+  let teamColour = (t,pad) => {
+    let n = pad || 0;
+    if (g.outcome=='W' && focusedTeam==g.home) return (t.padEnd(n)).green;
+    else if (g.outcome=='L' && focusedTeam==g.away) return (t.padEnd(n)).green;
+    else if (g.outcome=='L' && focusedTeam==g.home) return (t.padEnd(n)).red;
+    else if (g.outcome=='W' && focusedTeam==g.away) return (t.padEnd(n)).red;
+    else return t.padEnd(n);
   }
   let score = teamColour(`${g.f}-${g.a}`);
-  let home = g.home == focusedTeam ? teamColour(g.home) : g.home;
+  let home = g.home == focusedTeam ? teamColour(g.home,maxPad) : g.home.padEnd(maxPad);
   let away = g.away == focusedTeam ? teamColour(g.away) : g.away;
 
-  console.log(`${diff.padEnd(10)} : ${PERF[g.round]} : ${home} ${score} ${away}`)
+  console.log(`${diff.padEnd(10)} : ${PERF[g.round].padEnd(11)} : ${home} ${score} ${away}`)
+}
+
+function collectStreak(matches, team){
+  var streak = '';
+  for (m of matches){
+    if (m.outcome=='W' && m.home==team) streak += 'W'.green;
+    else if (m.outcome=='L' && m.away==team) streak += 'W'.green;
+    else if (m.outcome=='L' && m.home==team) streak += 'L'.red;
+    else if (m.outcome=='W' && m.away==team) streak += 'L'.red;
+    else streak += 'D';
+  }
+  return streak;
 }
 
 function collectPastHistory(matches){
-  let [lastYear, games1, goals1, games2, goals2] = matches;
+  let [lastYear, games1, goals1, games2, goals2, meetings] = matches;
 
-  // TAOTODO:
-  for (let i=0; i<15; i++)
-    printGame(lastYear, games1[i], team1)
+  let teams = [team1, team2];
+  let games = [games1, games2];
+  
+  const LAST_N_GAMES = 10;
+  const LAST_N_YEARS = 10;
+
+  for (let n=0; n<=1; n++){
+    console.log()
+    console.log(`===================================`.magenta)
+    console.log(` ${teams[n]} : ${collectStreak(games[n].slice(0,LAST_N_GAMES), teams[n])}`)
+    console.log(`===================================`.magenta)
+    
+    var maxPad = 0;
+    for (let i=0; i<LAST_N_GAMES; i++)
+      maxPad = Math.max(maxPad, games[n][i].home.length)
+
+    for (let i=0; i<LAST_N_GAMES; i++)
+      printGame(lastYear, games[n][i], teams[n], maxPad)
+  }
+
+  console.log()
+  console.log(`===================================`.magenta)
+  console.log(` RECENT ${LAST_N_YEARS}`)
+  console.log(`===================================`.magenta)
+  for (let i=0; i<LAST_N_YEARS; i++){
+    // TAOTODO:
+  }
+
+  maxPad = Math.max(teams);
+  console.log()
+  console.log(`===================================`.magenta)
+  console.log(` RECENT ${LAST_N_GAMES} MEETINGS : ${collectStreak(meetings.slice(0,LAST_N_GAMES), team1)}`)
+  console.log(`===================================`.magenta)
+  for (let i=0; i<LAST_N_GAMES; i++){
+    printGame(lastYear, meetings[i], team1, maxPad)
+  }
+
+
+  
 }
 
 F.countYears()
