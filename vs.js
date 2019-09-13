@@ -41,7 +41,7 @@ function printGame(lastYear,g,focusedTeam,maxPad){
   if (!g)
     return;
   let yearDiff = lastYear - g.year;
-  let diff = yearDiff == 0 ? "This year" : yearDiff + " yrs ago";
+  let diff = yearDiff == 0 ? "This year" : "Last " + yearDiff + " years";
   let teamColour = (t,pad) => {
     let n = pad || 0;
     if (g.outcome=='W' && focusedTeam==g.home) return (t.padEnd(n)).green;
@@ -54,7 +54,7 @@ function printGame(lastYear,g,focusedTeam,maxPad){
   let home = g.home == focusedTeam ? teamColour(g.home,maxPad) : g.home.padEnd(maxPad);
   let away = g.away == focusedTeam ? teamColour(g.away) : g.away;
 
-  console.log(`${diff.padEnd(10)} : ${PERF[g.round].padEnd(11)} : ${home} ${score} ${away}`)
+  console.log(`${diff.padEnd(13)} : ${PERF[g.round].padEnd(11)} : ${home} ${score} ${away}`)
 }
 
 function collectStreak(matches, team){
@@ -69,6 +69,25 @@ function collectStreak(matches, team){
   return streak;
 }
 
+function collectYear(lastYear, diffYear, games){
+  var line = diffYear == 0 ? "This year" : `last ${diffYear} years`;
+  line = line.padEnd(16) + ': ';
+  for (n=0; n<=1; n++){
+    let ydata = games[n].filter((g) => g.year == lastYear-diffYear)
+    let bestShot = 32;
+    for (a of ydata){
+      if (a.round<bestShot)
+        bestShot = a.round;
+    }
+
+    line += ydata.length == 0 ? '--'.padEnd(14).red : 
+            bestShot <= 8 ? (PERF[bestShot].padEnd(14)).green : 
+            bestShot == 32? (PERF[bestShot].padEnd(14)).red :
+            PERF[bestShot].padEnd(14);
+  }
+  console.log(line);
+}
+
 function collectPastHistory(matches){
   let [lastYear, games1, goals1, games2, goals2, meetings] = matches;
 
@@ -76,7 +95,7 @@ function collectPastHistory(matches){
   let games = [games1, games2];
   
   const LAST_N_GAMES = 10;
-  const LAST_N_YEARS = 10;
+  const LAST_N_YEARS = 7;
 
   for (let n=0; n<=1; n++){
     console.log()
@@ -94,10 +113,11 @@ function collectPastHistory(matches){
 
   console.log()
   console.log(`===================================`.magenta)
-  console.log(` RECENT ${LAST_N_YEARS}`)
+  console.log(` RECENT ${LAST_N_YEARS} YEARS`)
   console.log(`===================================`.magenta)
+  console.log(`${''.padEnd(17)} ${team1.padEnd(14)} ${team2}`)
   for (let i=0; i<LAST_N_YEARS; i++){
-    // TAOTODO:
+    collectYear(lastYear, i, games);
   }
 
   maxPad = Math.max(teams);
@@ -109,8 +129,6 @@ function collectPastHistory(matches){
     printGame(lastYear, meetings[i], team1, maxPad)
   }
 
-
-  
 }
 
 F.countYears()
