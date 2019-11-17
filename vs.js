@@ -95,7 +95,7 @@ function collectPastHistory(matches){
   let games = [games1, games2];
   
   const LAST_N_GAMES = 10;
-  const LAST_N_YEARS = 7;
+  const LAST_N_YEARS = 10;
 
   for (let n=0; n<=1; n++){
     console.log()
