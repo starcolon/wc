@@ -34,8 +34,20 @@ Promise.all([allScorers,allTeamScorers,allHattricks])
       console.log(`${p.team.padEnd(10).green} : ${p.scorers.map(toStr).join(', ')}`)
     )
 
-    allHattricks.splice(0,25).map((h) => {
-      console.log(`${h.goals} goals : ${h._id.player.green} (${h.times} times)`)
+    var oneTimer = []
+    var goals = 10;
+    allHattricks.splice(0,55).map((h) => {
+      if (h.goals < goals){
+        if (oneTimer.length > 0)
+          console.log(`${goals} goals : ${oneTimer.join(', ').green} 1 times`)
+        goals = h.goals;
+        oneTimer = []
+      }
+
+      if (h.times == 1)
+        oneTimer.push(h._id.player);
+      else
+        console.log(`${h.goals} goals : ${h._id.player.green} (${h.times} times)`)
       // {
       //   _id: { player: 'Vidal', team: 'Chile', goals: 4 },
       //   times: 1,
