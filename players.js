@@ -33,6 +33,16 @@ Promise.all([allScorers,allTeamScorers,allHattricks])
     allTeamScorers.sort(byTeamName).map((p) =>
       console.log(`${p.team.padEnd(10).green} : ${p.scorers.map(toStr).join(', ')}`)
     )
+
+    allHattricks.splice(0,25).map((h) => {
+      console.log(`${h.goals} goals : ${h._id.player.green} (${h.times} times)`)
+      // {
+      //   _id: { player: 'Vidal', team: 'Chile', goals: 4 },
+      //   times: 1,
+      //   goals: 4
+      // }
+      
+    })
     
   })
   .catch((e) => {console.log(e); process.exit(1)})
