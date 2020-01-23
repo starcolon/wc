@@ -8,6 +8,7 @@ var PriorityQueue = require('js-priority-queue');
 
 let allScorers = F.loadAggScorers().asPromise()
 let allTeamScorers = F.loadTopScorersByCountry().asPromise()
+let allHattricks = F.loadHattricks().asPromise()
 
 const byTeamName = (a,b) => {
   if (a.team < b.team) return -1
@@ -15,9 +16,9 @@ const byTeamName = (a,b) => {
   else return 0
 }
 
-Promise.all([allScorers,allTeamScorers])
+Promise.all([allScorers,allTeamScorers,allHattricks])
   .then((res) => {
-    [allScorers,allTeamScorers] = res
+    [allScorers,allTeamScorers,allHattricks] = res
     
     console.log('All-time scorers'.magenta)
     allScorers.slice(0,15).map((p) => 
