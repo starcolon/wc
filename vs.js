@@ -6,7 +6,7 @@ var colors = require('colors');
 var F      = require('./lib/fundamental');
 var PriorityQueue = require('js-priority-queue');
 
-const maxYears = 60;
+const maxYears = 100;
 
 var team1 = process.argv.slice(2)[0].replace('_', ' ');
 var team2 = process.argv.slice(2)[1].replace('_', ' ');
@@ -94,8 +94,8 @@ function collectPastHistory(matches){
   let teams = [team1, team2];
   let games = [games1, games2];
   
-  const LAST_N_GAMES = 10;
-  const LAST_N_YEARS = 10;
+  const LAST_N_GAMES = 15;
+  const LAST_N_YEARS = 15;
 
   for (let n=0; n<=1; n++){
     console.log()

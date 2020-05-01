@@ -28,7 +28,7 @@ Promise.all([allScorers,allTeamScorers,allHattricks])
     console.log()
     console.log('Top scorers by team'.magenta)
     const toStr = (p) => {
-      return `${p.player} (${p.goals})`
+      return `${p.player} (${p.goals})`.padEnd(16)
     }
     allTeamScorers.sort(byTeamName).map((p) =>
       console.log(`${p.team.padEnd(10).green} : ${p.scorers.map(toStr).join(', ')}`)
@@ -36,7 +36,7 @@ Promise.all([allScorers,allTeamScorers,allHattricks])
 
     var oneTimer = []
     var goals = 10;
-    allHattricks.splice(0,55).map((h) => {
+    allHattricks.splice(0,70).map((h) => {
       if (h.goals < goals){
         if (oneTimer.length > 0)
           console.log(`${goals} goals : ${oneTimer.join(', ').green} 1 times`)
