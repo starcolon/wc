@@ -137,5 +137,3 @@ F.countYears()
   .then(collectPastHistory)
   .catch((e) => {console.log(e); process.exit(1)})
   .then(() => process.exit(0))
-
-// TAOTODO
