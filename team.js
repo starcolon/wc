@@ -2,7 +2,7 @@ var colors = require('colors');
 var F      = require('./lib/fundamental');
 var PriorityQueue = require('js-priority-queue');
 
-const maxYears = 100;
+const maxYears = 20;
 var team = process.argv.slice(2)[0].replace('_', ' ');
 
 let annualScorers = F.loadAnnualScorersByCountry(team).asPromise()
@@ -15,14 +15,18 @@ let byYearDesc = (a,b) => {
 
 Promise.all([annualScorers])
   .then((res) => {
-    console.log(annualScorers.scorers) // TAODEBUG
-    let scorers = annualScorers.sort(byYearDesc).slice(0, 20)
-    console.log(`Top scorers last ${nYear} years`.magenta)
+    let [scorersByYear] = res
+    let scorers = Object.values(scorersByYear).slice(maxYears)
+
+    console.log(`Top scorers last ${maxYears} editions`.magenta)
     const toStr = (p) => {
       return `${p.player} (${p.goals})`.padEnd(16)
     }
-    scorers.map((p) =>
-      console.log(`${p.team.padEnd(10).green} : ${p.scorers.map(toStr).join(', ')}`)
-    )
+
+    scorers.map((pn, i) => {
+      let yearStr = (i==0) ? "This year" : `Last ${i+1} editions`
+      let sc = pn.map(toStr).join(', ')
+      console.log(`${yearStr} : ${sc}`)
+    })
   })
   .then(() => process.exit(0))
