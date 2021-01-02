@@ -85,6 +85,8 @@ function repl(){
     })
     .then((t) => {
 
+      // TAOTODO This fails when tournament ends
+
       tour = t;
 
       let home = tour.round[nextRound][nextGroup].fixture[nextMatch].home;
