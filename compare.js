@@ -266,8 +266,6 @@ var loadTeamScores = function(){
                 topOppoScorers[i][s.player] = {player: s.player, goal: 0}
               topOppoScorers[i][s.player].goal ++;
             }
-
-            // TAOTODO: Record the minutes that the team score or concede
           })
         })
 

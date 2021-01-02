@@ -48,12 +48,6 @@ Promise.all([allScorers,allTeamScorers,allHattricks])
         oneTimer.push(h._id.player);
       else
         console.log(`${h.goals} goals : ${h._id.player.green} (${h.times} times)`)
-      // {
-      //   _id: { player: 'Vidal', team: 'Chile', goals: 4 },
-      //   times: 1,
-      //   goals: 4
-      // }
-      
     })
     
   })
