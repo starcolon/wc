@@ -26,7 +26,7 @@ function analyseStreak(games){
     }
     else {
       let outcomeMap = {W: 'L', D: 'D', L: 'W'}
-      return [outcomeMap[g.outcome, g.a, g.f, false, g.home, g.year]]
+      return [outcomeMap[g.outcome], g.a, g.f, false, g.home, g.year]
     }
   }
 
@@ -107,28 +107,30 @@ Promise.all([annualScorers, recentGames])
 
     let streakInfo = analyseStreak(games);
 
+    const venue = {true: 'H', false: 'A'}
+
     console.log(`Longest run of winning streak (${streakInfo.longestWin.length} games)`.magenta)
     streakInfo.longestWin.forEach((p) => {
       let [result, f, a, isHome, opp, y] = p;
-      console.log(`    ${result.green} ${f}-${a} ${opp} .... year ${y}`)
+      console.log(`    ${result.green} ${f}-${a} ${venue[isHome]} ${opp} .... year ${y}`)
     })
 
     console.log(`Longest run of unbeaten streak (${streakInfo.longestUndefeat.length} games)`.magenta)
     streakInfo.longestUndefeat.forEach((p) => {
       let [result, f, a, isHome, opp, y] = p;
-      console.log(`    ${result.blue} ${f}-${a} ${opp} .... year ${y}`)
+      console.log(`    ${result.blue} ${f}-${a} ${venue[isHome]} ${opp} .... year ${y}`)
     })
 
     console.log(`Longest run of losing streak (${streakInfo.longestLost.length} games)`.magenta)
     streakInfo.longestLost.forEach((p) => {
       let [result, f, a, isHome, opp, y] = p;
-      console.log(`    ${result.red} ${f}-${a} ${opp} .... year ${y}`)
+      console.log(`    ${result.red} ${f}-${a} ${venue[isHome]} ${opp} .... year ${y}`)
     })
 
     console.log(`Longest run without winning (${streakInfo.longestNoWin.length} games)`.magenta)
     streakInfo.longestNoWin.forEach((p) => {
       let [result, f, a, isHome, opp, y] = p;
-      console.log(`    ${result.red} ${f}-${a} ${opp} .... year ${y}`)
+      console.log(`    ${result.red} ${f}-${a} ${venue[isHome]} ${opp} .... year ${y}`)
     })
 
     console.log(`Top scorers last ${maxYears} editions`.magenta)
