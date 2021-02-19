@@ -79,13 +79,12 @@ function repl(){
             year = year + 1;
             return F.newTournament()
           })
+          .then(() => new Promise(resolve => setTimeout(resolve, 1500))) // 1 sec delay
           .then(() => F.loadTournament(year))
           .then((tours) => tours[0])
       }
     })
     .then((t) => {
-
-      // TAOTODO This fails when tournament ends
 
       tour = t;
 
